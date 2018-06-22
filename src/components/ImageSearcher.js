@@ -16,7 +16,7 @@ class ImageSearcher extends React.Component {
     return (
       <Paper className={classes.root} elevation={4}>
         <Typography variant="headline" component="h3">
-          Enter the number of images you'd like to return:
+          Enter the number of images you'd like to return (between 1-100):
         </Typography>
         <TextField
           id="number"
@@ -42,7 +42,6 @@ const styles = theme => ({
   root: theme.mixins.gutters({
     paddingTop: 16,
     paddingBottom: 16,
-    marginTop: theme.spacing.unit * 10,
   }),
   textField: {
     marginLeft: theme.spacing.unit,
