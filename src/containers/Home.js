@@ -10,7 +10,7 @@ import UserService from "../services/UserService";
 import Profile from "./Profile";
 import AdminControls from "./AdminControls";
 import SearchResults from "./SearchResults";
-import { Link } from "react-router-dom";
+import UserPage from "./UserPage";
 
 class Home extends React.Component {
   constructor(props) {
@@ -60,6 +60,7 @@ class Home extends React.Component {
           <PropsRoute path="/profile" component={Profile} user={this.state.user} setUser={this.setUser}/>
           <PropsRoute path="/admin" component={AdminControls} />
           <PropsRoute path="/searchResults/:input" component={SearchResults}/>
+          <PropsRoute path="/user/:userId" component={UserPage} loggedInUser={this.state.user}/>
         </div>
       </Router>
     );

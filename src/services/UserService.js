@@ -12,6 +12,50 @@ export default class UserService {
     return this[_singleton];
   }
 
+  getFollowers(id) {
+    return fetch(USER_API + '/' + id '/followers').then(function (response) {
+      return response.json();
+    })
+  }
+
+  getFollowing(id) {
+    return fetch(USER_API + '/' + id '/following').then(function (response) {
+      return response.json();
+    })
+  }
+
+  isFollowing(id) {
+    return fetch(USER_API + '/' + id + '/isFollowing', {
+      credentials: "same-origin"
+    }).then(function (response) {
+      return response.json();
+    })
+  }
+
+  follow(id) {
+    return fetch(USER_API + '/follow/' + id, {
+      method: 'put',
+      credentials: "same-origin"
+    }).then(function (response) {
+      return response.json();
+    })
+  }
+
+  unfollow(id) {
+    return fetch(USER_API + '/unfollow/' + id, {
+      method: 'put',
+      credentials: "same-origin"
+    }).then(function (response) {
+      return response.json();
+    })
+  }
+
+  getUser(id) {
+    return fetch(USER_API + '/' + id).then(function(response) {
+      return response.json();
+    })
+  }
+
   register(user) {
     return fetch(BASE_URL + 'register', {
       method: "post",
