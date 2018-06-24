@@ -6,52 +6,52 @@ import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import UserService from "../services/UserService";
+import { Link } from "react-router-dom";
 
-class Register extends React.Component {
+class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.userService = UserService.instance;
     this.state = {
-      username: "",
-      password: "",
-      verifyPass: "",
-      email: "",
-      usernameTaken: false,
+      id: this.props.user.id,
+      username: this.props.user.username,
+      password: this.props.user.password,
+      firstName: "",
+      lastName: "",
+      email: this.props.user.email,
       emptyUsername: false,
       emptyPass: false,
-      emptyVerifyPass: false,
       emptyEmail: false,
-      passwordsNotMatching: false,
     };
   }
 
-  register = () => {
+  componentDidMount() {
+    if (this.props.user.firstName) {
+      this.setState({firstName: this.props.user.firstName})
+    }
+    if (this.props.user.lastName) {
+      this.setState({lastName: this.props.user.lastName})
+    }
+  } 
+
+  updateProfile = () => {
     this.setState({
-      usernameTaken: false,
       emptyUsername: false,
       emptyPass: false,
-      emptyVerifyPass: false,
       emptyEmail: false,
-      passwordsNotMatching: false,
     })
 
     var username = this.state.username;
     var password = this.state.password;
-    var verifyPass = this.state.verifyPass;
+    var firstName = this.state.firstName;
+    var lastName = this.state.lastName;
     var email = this.state.email;
 
-
-    if (password && verifyPass && (password != verifyPass)) {
-      this.setState({passwordsNotMatching: true})
-    }
     if (!username) {
       this.setState({emptyUsername: true})
     }
     if (!password) {
       this.setState({emptyPass: true})
-    }
-    if (!verifyPass) {
-      this.setState({emptyVerifyPass: true})
     }
     if (!email) {
       this.setState({emptyEmail: true})
@@ -60,25 +60,21 @@ class Register extends React.Component {
     var user = {
       username: username,
       password: password,
+      firstName: firstName,
+      lastName: lastName,
       email: email
-    };
+    }
 
     if (!this.isError()) {
-      this.userService.register(user).then((res) => {
-        if (res.error) {
-          this.setState({usernameTaken: true})
-        } else {
-          this.props.login(res);
-          this.props.history.push("/");
-        }
-      });
+      this.userService.updateUser(user, this.state.id).then((user) => {
+        this.props.setUser(user);
+        this.props.history.push("/");
+      })
     }
-  };
+  }
 
   isError = () => {
-    return this.state.usernameTaken || this.state.emptyUsername ||
-      this.state.emptyPass || this.state.emptyVerifyPass || this.state.emptyEmail ||
-      this.state.passwordsNotMatching;
+    return this.state.emptyUsername || this.state.emptyPass || this.state.emptyEmail;
   }
 
   handleChange = name => event => {
@@ -93,7 +89,7 @@ class Register extends React.Component {
       <Paper className={classes.root} elevation={4}>
         <form className={classes.container} autoComplete="off">
           <Typography variant="headline" component="h3">
-            Register
+            Profile
           </Typography>
           <TextField
             required
@@ -108,7 +104,6 @@ class Register extends React.Component {
             margin="normal"
           />
           {this.state.emptyUsername && <Typography className={classes.error}>Please enter a username.</Typography>}
-          {this.state.usernameTaken && <Typography className={classes.error}>Username is already taken.</Typography>}
           <TextField
             required
             id="password"
@@ -123,21 +118,28 @@ class Register extends React.Component {
             margin="normal"
           />
           {this.state.emptyPass && <Typography className={classes.error}>Please enter a password.</Typography>}
-          {this.state.passwordsNotMatching && <Typography className={classes.error}>Passwords do not match.</Typography>}
           <TextField
-            required
-            id="verifyPass"
-            label="Verify Password"
-            value={this.state.verifyPass}
-            onChange={this.handleChange("verifyPass")}
+            id="firstName"
+            label="First Name"
+            value={this.state.firstName}
+            onChange={this.handleChange("firstName")}
             className={classes.textField}
             InputLabelProps={{
               shrink: true
             }}
-            type="password"
             margin="normal"
           />
-          {this.state.emptyVerifyPass && <Typography className={classes.error}>Please enter a password.</Typography>}
+          <TextField
+            id="lastName"
+            label="Last Name"
+            value={this.state.lastName}
+            onChange={this.handleChange("lastName")}
+            className={classes.textField}
+            InputLabelProps={{
+              shrink: true
+            }}
+            margin="normal"
+          />
           <TextField
             required
             id="email"
@@ -152,13 +154,20 @@ class Register extends React.Component {
           />
           {this.state.emptyEmail && <Typography className={classes.error}>Please enter an email.</Typography>}
           <Button
-            onClick={this.register}
+            onClick={this.updateProfile}
             variant="contained"
             color="primary"
             className={classes.button}
           >
-            Register
+            Save Profile
           </Button>
+          {this.props.user.admin &&
+          <Link to="/admin">
+            <Button variant="contained" className={classes.button}>
+              Admin Controls
+            </Button>
+          </Link>
+        }
         </form>
       </Paper>
     );
@@ -186,8 +195,8 @@ const styles = theme => ({
   }
 });
 
-Register.propTypes = {
+Profile.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Register);
+export default withStyles(styles)(Profile);

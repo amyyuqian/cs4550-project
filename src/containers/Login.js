@@ -45,7 +45,7 @@ class Login extends React.Component {
     if (!this.isError()) {
       this.userService.login(user).then((user) => {
         if (user) {
-          this.props.login();
+          this.props.login(user);
           this.props.history.push("/");
         } else {
           this.setState({invalidCredentials: true})

@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Register from "./Register";
 import Login from "./Login";
 import UserService from "../services/UserService";
+import Profile from "./Profile";
+import AdminControls from "./AdminControls";
 
 class Home extends React.Component {
   constructor(props) {
@@ -35,6 +37,10 @@ class Home extends React.Component {
     });
   }
 
+  setUser = (user) => {
+    this.setState({user: user})
+  }
+
   logout = () => {
     this.setState({isUserLoggedIn: false})
   }
@@ -48,6 +54,8 @@ class Home extends React.Component {
           <Route exact path="/" component={ImageContainer}></Route>
           <PropsRoute path="/register" component={Register} login={this.login}/>
           <PropsRoute path="/login" component={Login} login={this.login}/>
+          <PropsRoute path="/profile" component={Profile} user={this.state.user} setUser={this.setUser}/>
+          <PropsRoute path="/admin" component={AdminControls} />
         </div>
       </Router>
     );

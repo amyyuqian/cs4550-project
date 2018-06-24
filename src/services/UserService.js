@@ -30,7 +30,7 @@ export default class UserService {
   }
 
   login(user) {
-    return fetch(BASE_URL  + 'login', {
+    return fetch(BASE_URL + 'login', {
       method: 'post',
       body: JSON.stringify(user),
       headers: {
@@ -46,6 +46,19 @@ export default class UserService {
     })
   }
 
+  updateUser(user, userId) {
+    return fetch(USER_API + '/' + userId, {
+      method: 'put',
+      body: JSON.stringify(user),
+      headers: {
+        "content-type": "application/json"
+      },
+      credentials: "same-origin"
+    }).then(function (response) {
+      return response.json();
+    })
+  }
+
   profile() {
     return fetch(BASE_URL + 'profile')
       .then(function (response) {
@@ -57,5 +70,15 @@ export default class UserService {
       })
   }
 
+  getAllUsers() {
+    return fetch(USER_API).then(function (response) {
+      return response.json();
+    })
+  }
 
+  deleteUser(userId) {
+    return fetch(USER_API + '/' + userId, {
+      method: 'delete'
+    })
+  }
 }

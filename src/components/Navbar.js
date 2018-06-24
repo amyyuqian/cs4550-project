@@ -45,15 +45,15 @@ class Navbar extends React.Component {
                 <Link to="/">
                   <Button onClick={this.props.logout} className={classes.textPrimary}>Logout</Button>
                 </Link>
-                <IconButton
-                  className={classes.menuButton}
-                  color="inherit"
-                  aria-label="Menu"
-                >
-                  <AccountCircle />
-                </IconButton>
+                <Link to="/profile">
+                  <IconButton
+                    className={classes.menuButton, classes.textPrimary}
+                    aria-label="Menu"
+                  >
+                    <AccountCircle />
+                  </IconButton>
+                </Link>
               </div>
-              
               }
             </div>
           </Toolbar>
@@ -73,7 +73,9 @@ const styles = theme => ({
   },
   menuButton: {
     marginLeft: -12,
-    marginRight: 20
+    marginRight: 20,
+    color: 'white',
+    textDecorationLine: 'none'
   },
   textPrimary: {
     color: 'white',
