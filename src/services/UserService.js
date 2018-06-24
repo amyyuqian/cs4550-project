@@ -13,13 +13,13 @@ export default class UserService {
   }
 
   getFollowers(id) {
-    return fetch(USER_API + '/' + id '/followers').then(function (response) {
+    return fetch(USER_API + '/' + id + '/followers').then(function (response) {
       return response.json();
     })
   }
 
   getFollowing(id) {
-    return fetch(USER_API + '/' + id '/following').then(function (response) {
+    return fetch(USER_API + '/' + id + '/following').then(function (response) {
       return response.json();
     })
   }

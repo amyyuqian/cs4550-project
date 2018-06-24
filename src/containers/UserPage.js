@@ -9,13 +9,17 @@ import Grid from '@material-ui/core/Grid';
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import Followees from "../components/Followees";
 
 class UserPage extends React.Component {
   constructor(props) {
     super(props);
     this.userService = UserService.instance;
     this.state = {
-      user: ''
+      user: '',
+      followers: [],
+      following: [],
+      favorites: [],
     }
   }
 
@@ -30,34 +34,52 @@ class UserPage extends React.Component {
     })
   }
 
-  renderFollowButton() {
-    const { classes } = this.props;
-    return (
-      <Button
-        variant="contained"
-        color="primary"
-        className={classes.button}
-      >
-        Follow
-      </Button>
-    )
+  follow = () => {
+    var id = this.props.match.params.userId;
+    this.userService.follow(id).then(() => {
+      this.getFollowers();
+    })
   }
 
-  renderUnfollowButton() {
+  unfollow = () => {
+    var id = this.props.match.params.userId;
+    this.userService.unfollow(id).then(() => {
+      this.getFollowers();
+    })
+  }
+
+  renderFollowButton() {
     const { classes } = this.props;
-    return (
-      <Button
-        variant="contained"
-        color="primary"
-        className={classes.button}
-      >
-        Unfollow
-      </Button>
-    )
+    if (this.props.loggedInUser && !this.isFollowing()) {
+      return (
+        <Button
+          onClick={this.follow}
+          variant="contained"
+          color="primary"
+          className={classes.button}
+        >
+          Follow
+        </Button>
+      )
+    } else {
+      return (
+        <Button
+          onClick={this.unfollow}
+          variant="contained"
+          color="primary"
+          className={classes.button}
+        >
+          Unfollow
+        </Button>
+      )
+    }
   }
 
   isFollowing = () => {
-
+    var id = this.props.match.params.userId;
+    this.userService.isFollowing(id).then((isFollowing) => {
+      return isFollowing;
+    })
   }
 
   render() {
@@ -83,9 +105,9 @@ class UserPage extends React.Component {
                 </ListItem>
               </List>
             </div>
-            {this.props.loggedInUser && !this.isFollowing() && this.renderFollowButton()}
-            {this.props.loggedInUser && this.isFollowing() && this.renderUnfollowButton()}
+            {this.renderFollowButton()}
           </Grid>
+          <Followees userId={this.props.match.params.userId}/>
       </Paper>
     )
   }

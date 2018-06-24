@@ -12,34 +12,44 @@ import { Link } from 'react-router-dom';
 import Divider from '@material-ui/core/Divider';
 
 
-class SearchResults extends React.Component {
+class Followees extends React.Component {
   constructor(props) {
     super(props);
     this.userService = UserService.instance;
     this.state = {
-      users: this.props.users || [],
+      followers: [],
+      following: [],
     }
   }
 
   componentDidMount() {
-    this.search();
+    this.getFollowers();
+    this.getFollowing();
   }
 
-  search = () => {
-    var input = this.props.match.params.input;
-    this.userService.searchUsers(input).then((users) => {
-      this.setState({users: users})
+
+  getFollowers = () => {
+    var id = this.props.userId;
+    this.userService.getFollowers(id).then((followers) => {
+      this.setState({followers: followers})
     })
   }
 
-  renderUsers = () => {
-    let users = this.state.users.map((user, index) => {
+  getFollowing = () => {
+    var id = this.props.userId;
+    this.userService.getFollowing(id).then((following) => {
+      this.setState({following: following})
+    })
+  }
+
+  renderUsers = (items) => {
+    let users = items.map((user, index) => {
       return (
-        <Link to={`/user/${user.id}`} key={index} style={{textDecoration: 'none'}}>
+        <Link to={`/user/${user.id}`} style={{textDecoration: 'none'}}>
           <ListItem>
             <ListItemText
               primary={user.username}
-              secondary={"ID: " + user.id}
+              secondary={user.firstName + ' ' + user.lastName}
             />
           </ListItem>
           <Divider />
@@ -55,11 +65,19 @@ class SearchResults extends React.Component {
       <div className={classes.container}>
           <Grid item xs={12} md={6}>
             <Typography variant="title" className={classes.title}>
-              Users
+              Followers
             </Typography>
             <div className={classes.demo}>
-              <List dense={false}>
-                {this.renderUsers()}
+              <List dense={true}>
+                {this.renderUsers(this.state.followers)}
+              </List>
+            </div>
+            <Typography variant="title" className={classes.title}>
+              Following
+            </Typography>
+            <div className={classes.demo}>
+              <List dense={true}>
+                {this.renderUsers(this.state.following)}
               </List>
             </div>
           </Grid>
@@ -76,8 +94,8 @@ const styles = theme => ({
   },
 });
 
-SearchResults.propTypes = {
+Followees.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(SearchResults);
+export default withStyles(styles)(Followees);
