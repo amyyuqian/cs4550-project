@@ -15,19 +15,71 @@ class Register extends React.Component {
       username: "",
       password: "",
       verifyPass: "",
-      email: ""
+      email: "",
+      usernameTaken: false,
+      emptyUsername: false,
+      emptyPass: false,
+      emptyVerifyPass: false,
+      emptyEmail: false,
+      passwordsNotMatching: false,
     };
   }
 
   register = () => {
+    this.setState({
+      usernameTaken: false,
+      emptyUsername: false,
+      emptyPass: false,
+      emptyVerifyPass: false,
+      emptyEmail: false,
+      passwordsNotMatching: false,
+    })
+
+    var username = this.state.username;
+    var password = this.state.password;
+    var verifyPass = this.state.verifyPass;
+    var email = this.state.email;
+
+
+    if (password && verifyPass && (password != verifyPass)) {
+      this.setState({passwordsNotMatching: true})
+    }
+    if (!username) {
+      this.setState({emptyUsername: true})
+    }
+    if (!password) {
+      this.setState({emptyPass: true})
+    }
+    if (!verifyPass) {
+      this.setState({emptyVerifyPass: true})
+    }
+    if (!email) {
+      this.setState({emptyEmail: true})
+    }
+
     var user = {
-      username: this.state.username,
-      password: this.state.password,
-      email: this.state.email
+      username: username,
+      password: password,
+      email: email
     };
 
-    this.userService.register(user);
+    if (!this.isError()) {
+      this.userService.register(user).then((res) => {
+        if (res.error) {
+          this.setState({usernameTaken: true})
+        } else {
+          this.props.login();
+          this.props.history.push("/");
+        }
+      });
+    }
   };
+
+  isError = () => {
+    return this.state.usernameTaken || this.state.emptyUsername ||
+      this.state.emptyPass || this.state.emptyVerifyPass || this.state.emptyEmail ||
+      this.state.passwordsNotMatching;
+  }
 
   handleChange = name => event => {
     this.setState({
@@ -55,35 +107,42 @@ class Register extends React.Component {
             }}
             margin="normal"
           />
+          {this.state.emptyUsername && <Typography className={classes.error}>Please enter a username.</Typography>}
+          {this.state.usernameTaken && <Typography className={classes.error}>Username is already taken.</Typography>}
           <TextField
             required
             id="password"
             label="Password"
-            value={this.state.username}
+            value={this.state.password}
             onChange={this.handleChange("password")}
             className={classes.textField}
             InputLabelProps={{
               shrink: true
             }}
+            type="password"
             margin="normal"
           />
+          {this.state.emptyPass && <Typography className={classes.error}>Please enter a password.</Typography>}
+          {this.state.passwordsNotMatching && <Typography className={classes.error}>Passwords do not match.</Typography>}
           <TextField
             required
             id="verifyPass"
             label="Verify Password"
-            value={this.state.username}
+            value={this.state.verifyPass}
             onChange={this.handleChange("verifyPass")}
             className={classes.textField}
             InputLabelProps={{
               shrink: true
             }}
+            type="password"
             margin="normal"
           />
+          {this.state.emptyVerifyPass && <Typography className={classes.error}>Please enter a password.</Typography>}
           <TextField
             required
             id="email"
             label="Email"
-            value={this.state.username}
+            value={this.state.email}
             onChange={this.handleChange("email")}
             className={classes.textField}
             InputLabelProps={{
@@ -91,6 +150,7 @@ class Register extends React.Component {
             }}
             margin="normal"
           />
+          {this.state.emptyEmail && <Typography className={classes.error}>Please enter an email.</Typography>}
           <Button
             onClick={this.register}
             variant="contained"
@@ -120,6 +180,10 @@ const styles = theme => ({
     margin: theme.spacing.unit,
     width: 200
   },
+  error: {
+    fontSize: 12,
+    color: 'red'
+  }
 });
 
 Register.propTypes = {

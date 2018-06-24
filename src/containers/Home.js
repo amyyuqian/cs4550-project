@@ -6,15 +6,37 @@ import ImageContainer from "./ImageContainer";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Register from "./Register";
 import Login from "./Login";
-
+import UserService from "../services/UserService";
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
+    this.userService = UserService.instance;
+    this.state = {
+      isUserLoggedIn: false,
+      user: '',
+    }
   }
 
-  setUser = (user) => {
-    this.setState({user: user});
+  componentDidMount() {
+    this.userService.profile().then((user) => {
+      if (user) {
+        this.login(user);
+      } else {
+        this.logout();
+      }
+    })
+  }
+
+  login = (user) => {
+    this.setState({
+      isUserLoggedIn: true,
+      user: user
+    });
+  }
+
+  logout = () => {
+    this.setState({isUserLoggedIn: false})
   }
 
   render() {
@@ -22,14 +44,29 @@ class Home extends React.Component {
     return (
       <Router>
         <div>
-          <Navbar />
+          <Navbar isUserLoggedIn={this.state.isUserLoggedIn} logout={this.logout}/>
           <Route exact path="/" component={ImageContainer}></Route>
-          <Route path="/register" component={Register} />
-          <Route path="/login" component={Login} />
+          <PropsRoute path="/register" component={Register} login={this.login}/>
+          <PropsRoute path="/login" component={Login} login={this.login}/>
         </div>
       </Router>
     );
   }
+}
+
+const renderMergedProps = (component, ...rest) => {
+  const finalProps = Object.assign({}, ...rest);
+  return (
+    React.createElement(component, finalProps)
+  );
+}
+
+const PropsRoute = ({ component, ...rest }) => {
+  return (
+    <Route {...rest} render={routeProps => {
+      return renderMergedProps(component, routeProps, rest);
+    }}/>
+  );
 }
 
 const styles = theme => ({});

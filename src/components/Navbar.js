@@ -24,19 +24,37 @@ class Navbar extends React.Component {
               Shiba Town
             </Typography>
             <div className="">
-              <Link to="/login">
-                <Button className={classes.textPrimary}>Login</Button>
-              </Link>
-              <Link to="/register">
-                <Button className={classes.textPrimary}>Register</Button>
-              </Link>
-              <IconButton
-                className={classes.menuButton}
-                color="inherit"
-                aria-label="Menu"
-              >
-                <AccountCircle />
-              </IconButton>
+              {!this.props.isUserLoggedIn &&
+              <div>
+                <Link to="/">
+                  <Button className={classes.textPrimary}>Home</Button>
+                </Link>
+                <Link to="/login">
+                  <Button className={classes.textPrimary}>Login</Button>
+                </Link>
+                <Link to="/register">
+                  <Button className={classes.textPrimary}>Register</Button>
+                </Link>
+              </div>
+              }
+              {this.props.isUserLoggedIn &&
+              <div>
+                <Link to="/">
+                  <Button className={classes.textPrimary}>Home</Button>
+                </Link>
+                <Link to="/">
+                  <Button onClick={this.props.logout} className={classes.textPrimary}>Logout</Button>
+                </Link>
+                <IconButton
+                  className={classes.menuButton}
+                  color="inherit"
+                  aria-label="Menu"
+                >
+                  <AccountCircle />
+                </IconButton>
+              </div>
+              
+              }
             </div>
           </Toolbar>
         </AppBar>
