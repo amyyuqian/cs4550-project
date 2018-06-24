@@ -81,4 +81,12 @@ export default class UserService {
       method: 'delete'
     })
   }
+
+  searchUsers(user) {
+    return fetch(BASE_URL + 'search/' + user, {
+      credentials: "same-origin",
+    }).then(function (response) {
+      return response.json();
+    })
+  } 
 }

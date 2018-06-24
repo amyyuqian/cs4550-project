@@ -9,6 +9,8 @@ import Login from "./Login";
 import UserService from "../services/UserService";
 import Profile from "./Profile";
 import AdminControls from "./AdminControls";
+import SearchResults from "./SearchResults";
+import { Link } from "react-router-dom";
 
 class Home extends React.Component {
   constructor(props) {
@@ -17,6 +19,7 @@ class Home extends React.Component {
     this.state = {
       isUserLoggedIn: false,
       user: '',
+      searchResults: []
     }
   }
 
@@ -51,11 +54,12 @@ class Home extends React.Component {
       <Router>
         <div>
           <Navbar isUserLoggedIn={this.state.isUserLoggedIn} logout={this.logout}/>
-          <Route exact path="/" component={ImageContainer}></Route>
+          <PropsRoute exact path="/" component={ImageContainer} search={this.search} />
           <PropsRoute path="/register" component={Register} login={this.login}/>
           <PropsRoute path="/login" component={Login} login={this.login}/>
           <PropsRoute path="/profile" component={Profile} user={this.state.user} setUser={this.setUser}/>
           <PropsRoute path="/admin" component={AdminControls} />
+          <PropsRoute path="/searchResults/:input" component={SearchResults}/>
         </div>
       </Router>
     );
@@ -77,7 +81,8 @@ const PropsRoute = ({ component, ...rest }) => {
   );
 }
 
-const styles = theme => ({});
+const styles = theme => ({
+});
 
 Home.propTypes = {
   classes: PropTypes.object.isRequired

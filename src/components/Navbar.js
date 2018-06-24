@@ -26,7 +26,7 @@ class Navbar extends React.Component {
             <div className="">
               {!this.props.isUserLoggedIn &&
               <div>
-                <Link to="/">
+                <Link to="/" style={styles.link}>
                   <Button className={classes.textPrimary}>Home</Button>
                 </Link>
                 <Link to="/login">
@@ -79,6 +79,10 @@ const styles = theme => ({
   },
   textPrimary: {
     color: 'white',
+    textDecorationLine: 'none'
+  },
+  link: {
+    textDecoration: 'none',
     textDecorationLine: 'none'
   }
 });

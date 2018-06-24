@@ -4,6 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import ImageSearcher from "../components/ImageSearcher";
 import ImageService from "../services/ImageService";
 import ImageGallery from "../components/ImageGallery";
+import SearchInput from "../components/SearchInput";
 
 class ImageContainer extends React.Component {
   constructor(props) {
@@ -52,6 +53,7 @@ class ImageContainer extends React.Component {
   render() {
     return (
       <div>
+        <SearchInput search={this.props.search}/>
         <ImageSearcher
           num={this.state.num}
           handleChange={this.handleChange}
