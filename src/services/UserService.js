@@ -1,6 +1,7 @@
 let _singleton = Symbol();
 const BASE_URL = "https://cs4550-aqian-project.herokuapp.com/api/";
 const USER_API = "https://cs4550-aqian-project.herokuapp.com/api/user";
+const test = "https://cors-anywhere.herokuapp.com/" + USER_API;
 
 export default class UserService {
   constructor(singletonToken) {
@@ -33,20 +34,27 @@ export default class UserService {
   }
 
   follow(id) {
-    return fetch(USER_API + '/follow/' + id, {
-      method: 'put',
+    return fetch(test + '/follow/' + id, {
       credentials: "same-origin"
     }).then(function (response) {
-      return response.json();
+      if (response.status == 204) {
+        return;
+      } else {
+        return response.json();
+      }
     })
   }
 
   unfollow(id) {
     return fetch(USER_API + '/unfollow/' + id, {
       method: 'put',
-      credentials: "same-origin"
+      credentials: "include"
     }).then(function (response) {
-      return response.json();
+      if (response.status == 204) {
+        return;
+      } else {
+        return response.json();
+      }
     })
   }
 

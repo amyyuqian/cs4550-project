@@ -25,22 +25,20 @@ class ImageContainer extends React.Component {
 
   getShibas = () => {
     this.imageService.getShibas(this.state.num)
-      .then((shibas) => this.setImages(shibas));
+      .then((shibas) => {
+        this.setImages(shibas, "shiba");
+      });
   }
 
-  setImages = (images) => {
-    var image_objects = [];
-
-    images.map((image) => {
-      image_objects.push({
-        src: image,
-        width: 4,
-        height: 4,
-      })
-    })
-
-    this.setState({
-      images: image_objects,
+  setImages = (images, type) => {
+    images.map((url) => {
+      var img = {
+        url: url,
+        type: type
+      }
+      this.imageService.createImage(img).then((image) => {
+        this.setState({images: this.state.images.concat(image)});
+      });
     })
   }
 
@@ -59,7 +57,7 @@ class ImageContainer extends React.Component {
           handleChange={this.handleChange}
           getImages={this.getImages}
         />
-        <ImageGallery images={this.state.images} />
+        <ImageGallery images={this.state.images} user={this.props.user} isUserLoggedIn={this.props.isUserLoggedIn}/>
       </div>
     );
   }

@@ -17,14 +17,15 @@ class UserPage extends React.Component {
     this.userService = UserService.instance;
     this.state = {
       user: '',
-      followers: [],
-      following: [],
       favorites: [],
+      isFollowing: false,
     }
   }
 
   componentDidMount() {
     this.getUser();
+    this.isFollowing();
+
   }
 
   getUser = () => {
@@ -36,21 +37,21 @@ class UserPage extends React.Component {
 
   follow = () => {
     var id = this.props.match.params.userId;
-    this.userService.follow(id).then(() => {
-      this.getFollowers();
+    this.userService.follow(id).then((user) => {
+      console.log(user);
     })
   }
 
   unfollow = () => {
     var id = this.props.match.params.userId;
-    this.userService.unfollow(id).then(() => {
-      this.getFollowers();
+    this.userService.unfollow(id).then((user) => {
+      console.log(user);
     })
   }
 
   renderFollowButton() {
     const { classes } = this.props;
-    if (this.props.loggedInUser && !this.isFollowing()) {
+    if (this.props.isUserLoggedIn && !this.state.isFollowing) {
       return (
         <Button
           onClick={this.follow}
@@ -61,7 +62,7 @@ class UserPage extends React.Component {
           Follow
         </Button>
       )
-    } else {
+    } else if (this.props.isUserLoggedIn && this.state.isFollowing) {
       return (
         <Button
           onClick={this.unfollow}
@@ -78,7 +79,9 @@ class UserPage extends React.Component {
   isFollowing = () => {
     var id = this.props.match.params.userId;
     this.userService.isFollowing(id).then((isFollowing) => {
-      return isFollowing;
+      if (!isFollowing.error) {
+        this.setState({isFollowing: isFollowing})
+      }
     })
   }
 

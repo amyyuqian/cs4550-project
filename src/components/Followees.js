@@ -45,7 +45,7 @@ class Followees extends React.Component {
   renderUsers = (items) => {
     let users = items.map((user, index) => {
       return (
-        <Link to={`/user/${user.id}`} style={{textDecoration: 'none'}}>
+        <Link to={`/user/${user.id}`} key={index} style={{textDecoration: 'none'}}>
           <ListItem>
             <ListItemText
               primary={user.username}

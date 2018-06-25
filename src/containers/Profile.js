@@ -7,6 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import UserService from "../services/UserService";
 import { Link } from "react-router-dom";
+import Followees from "../components/Followees";
 
 class Profile extends React.Component {
   constructor(props) {
@@ -169,6 +170,7 @@ class Profile extends React.Component {
           </Link>
         }
         </form>
+        <Followees userId={this.state.id}/>
       </Paper>
     );
   }
