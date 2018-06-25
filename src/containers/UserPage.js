@@ -23,20 +23,26 @@ class UserPage extends React.Component {
   }
 
   componentDidMount() {
-    this.getUser();
-    this.isFollowing();
-
+    var id = this.props.match.params.userId;
+    this.getUser(id);
+    this.isFollowing(id);
   }
 
-  getUser = () => {
-    var id = this.props.match.params.userId;
+  componentWillReceiveProps (nextProps) {
+    if(nextProps.match.params.userId != this.props.match.params.userId) {
+      var id = nextProps.match.params.userId ;
+      this.getUser(id);
+      this.isFollowing(id);
+    }
+  }
+
+  getUser = (id) => {
     this.userService.getUser(id).then((user) => {
       this.setState({user: user})
     })
   }
 
-  follow = () => {
-    var id = this.props.match.params.userId;
+  follow = (id) => {
     this.userService.follow(id).then((user) => {
       console.log(user);
     })
