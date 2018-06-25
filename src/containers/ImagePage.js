@@ -10,6 +10,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from "@material-ui/core/Typography";
+import SimpleSnackbar from "../components/SimpleSnackbar";
 
 class ImagePage extends React.Component {
   constructor(props) {
@@ -19,13 +20,25 @@ class ImagePage extends React.Component {
     this.state = {
       image: '',
       id: this.props.match.params.imageId,
+      snackbarOpen: false,
     }
   }
-  
 
   componentDidMount() {
     this.getImage();
   }
+
+  handleClick = () => {
+    this.setState({ snackbarOpen: true });
+  };
+
+  handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({ snackbarOpen: false });
+  };
 
   getImage = () => {
     this.imageService.getImage(this.state.id).then((img) => {
@@ -34,19 +47,21 @@ class ImagePage extends React.Component {
   }
 
   favorite = () => {
-
+    this.imageService.favorite(this.state.id).then(() => {
+      this.setState({snackbarOpen: true})
+    })
   }
 
   renderFavorite = () => {
     if (this.props.isUserLoggedIn && this.isFavorite()) {
       return (
-        <Button size="small" color="primary">
+        <Button onClick={this.favorite} size="small" color="primary">
           Unfavorite
         </Button>
       )
     } else if (this.props.isUserLoggedIn && !this.isFavorite()) {
       return (
-        <Button size="small" color="primary">
+        <Button onClick={this.favorite} size="small" color="primary">
           Favorite
         </Button>
       )
@@ -73,6 +88,7 @@ class ImagePage extends React.Component {
             {this.renderFavorite()}
           </CardActions>
         </Card>
+        <SimpleSnackbar open={this.state.snackbarOpen} text={"Favorited"} />
       </div>
     )
   }
@@ -93,6 +109,10 @@ const styles = theme => ({
   media: {
     height: 0,
     paddingTop: '100%', // 16:9
+  },
+  close: {
+    width: theme.spacing.unit * 4,
+    height: theme.spacing.unit * 4,
   },
 });
 

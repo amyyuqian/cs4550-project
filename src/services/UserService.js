@@ -13,6 +13,12 @@ export default class UserService {
     return this[_singleton];
   }
 
+  getFavorites(id) {
+    return fetch(USER_API + '/' + id + '/favorites').then(function (response) {
+      return response.json();
+    })
+  }
+
   getFollowers(id) {
     return fetch(USER_API + '/' + id + '/followers').then(function (response) {
       return response.json();

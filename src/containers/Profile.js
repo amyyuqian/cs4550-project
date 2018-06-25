@@ -8,6 +8,8 @@ import Button from "@material-ui/core/Button";
 import UserService from "../services/UserService";
 import { Link } from "react-router-dom";
 import Followees from "../components/Followees";
+import ImageGallery from "../components/ImageGallery";
+import Grid from '@material-ui/core/Grid';
 
 class Profile extends React.Component {
   constructor(props) {
@@ -23,6 +25,7 @@ class Profile extends React.Component {
       emptyUsername: false,
       emptyPass: false,
       emptyEmail: false,
+      favorites: []
     };
   }
 
@@ -33,7 +36,14 @@ class Profile extends React.Component {
     if (this.props.user.lastName) {
       this.setState({lastName: this.props.user.lastName})
     }
-  } 
+    this.getFavorites();
+  }
+  
+  getFavorites = () => {
+    this.userService.getFavorites(this.state.id).then((favs) => {
+      this.setState({favorites: favs})
+    })
+  }
 
   updateProfile = () => {
     this.setState({
@@ -171,6 +181,12 @@ class Profile extends React.Component {
         }
         </form>
         <Followees userId={this.state.id}/>
+        <Grid item className={classes.container}>
+          <Typography variant="title">
+            Favorites
+          </Typography>
+          <ImageGallery images={this.state.favorites} user={this.props.user} isUserLoggedIn={true}/>
+        </Grid>
       </Paper>
     );
   }

@@ -40,8 +40,8 @@ export default class ImageService {
     })
   }
 
-  favorite(url) {
-    return fetch(IMG_API + '/' + url + '/favorite', {
+  favorite(id) {
+    return fetch(IMG_API + '/' + id + '/favorite', {
       method: 'post',
       credentials: "same-origin",
       headers: {
@@ -52,8 +52,10 @@ export default class ImageService {
     })
   }
 
-  isFavorite(userId, url) {
-    return fetch(USER_API + '/' + userId + '/image/' + url + '/isInFavorites')
+  isFavorite(userId, imgId) {
+    return fetch(USER_API + '/' + userId + '/image/' + imgId + '/isInFavorites', {
+      credentials: "same-origin",
+    })
       .then(function(response) {
         return response.json();
       })
