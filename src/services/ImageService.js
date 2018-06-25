@@ -3,6 +3,7 @@ const SHIBA_API = 'https://cors-anywhere.herokuapp.com/http://shibe.online/api/s
 const IMG_API = "https://cs4550-aqian-project.herokuapp.com/api/image";
 const USER_API = "https://cs4550-aqian-project.herokuapp.com/api/user";
 const BASE_URL = "https://cs4550-aqian-project.herokuapp.com/api/";
+const LOCAL_IMG = "http://localhost:8080/api/image";
 
 export default class ImageService {
   constructor(singletonToken) {
@@ -43,17 +44,13 @@ export default class ImageService {
   favorite(id) {
     return fetch(IMG_API + '/' + id + '/favorite', {
       method: 'post',
-      credentials: "same-origin",
-      headers: {
-        "content-type": "application/json"
-      },
     }).then(function (response) {
       return response.json();
     })
   }
 
-  isFavorite(userId, imgId) {
-    return fetch(USER_API + '/' + userId + '/image/' + imgId + '/isInFavorites', {
+  isFavorite(imgId) {
+    return fetch(IMG_API  + '/' + imgId + '/isInFavorites', {
       credentials: "same-origin",
     })
       .then(function(response) {

@@ -34,6 +34,10 @@ class AdminControls extends React.Component {
     })
   }
 
+  createNewUser = () => {
+    
+  }
+
   deleteUser(userId) {
     this.userService.deleteUser(userId).then(() => {
       this.getAllUsers();

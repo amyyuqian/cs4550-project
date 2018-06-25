@@ -87,6 +87,23 @@ export default class UserService {
     })
   }
 
+  createUser(user) {
+    return fetch(USER_API, {
+      method: "post",
+      body: JSON.stringify(user),
+      headers: {
+        "content-type": "application/json"
+      },
+      credentials: "same-origin"
+    }).then(function (response) {
+      if (response.status == 409) {
+        return {error: "Username is already taken"};
+      } else {
+        return response.json();
+      }
+    })
+  }
+
   login(user) {
     return fetch(BASE_URL + 'login', {
       method: 'post',

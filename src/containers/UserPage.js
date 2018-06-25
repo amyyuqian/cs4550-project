@@ -10,6 +10,7 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Followees from "../components/Followees";
+import ImageGallery from "../components/ImageGallery";
 
 class UserPage extends React.Component {
   constructor(props) {
@@ -19,12 +20,14 @@ class UserPage extends React.Component {
       user: '',
       favorites: [],
       isFollowing: false,
+      isUserLoggedIn: this.props.isUserLoggedIn,
     }
   }
 
   componentDidMount() {
     var id = this.props.match.params.userId;
     this.getUser(id);
+    this.getFavorites(id);
     this.isFollowing(id);
   }
 
@@ -33,12 +36,19 @@ class UserPage extends React.Component {
       var id = nextProps.match.params.userId ;
       this.getUser(id);
       this.isFollowing(id);
+      this.getFavorites(id);
     }
   }
 
   getUser = (id) => {
     this.userService.getUser(id).then((user) => {
       this.setState({user: user})
+    })
+  }
+
+  getFavorites = (id) => {
+    this.userService.getFavorites(id).then((favs) => {
+      this.setState({favorites: favs})
     })
   }
 
@@ -57,7 +67,7 @@ class UserPage extends React.Component {
 
   renderFollowButton() {
     const { classes } = this.props;
-    if (this.props.isUserLoggedIn && !this.state.isFollowing) {
+    if (this.state.isUserLoggedIn && !this.state.isFollowing) {
       return (
         <Button
           onClick={this.follow}
@@ -68,7 +78,7 @@ class UserPage extends React.Component {
           Follow
         </Button>
       )
-    } else if (this.props.isUserLoggedIn && this.state.isFollowing) {
+    } else if (this.state.isUserLoggedIn && this.state.isFollowing) {
       return (
         <Button
           onClick={this.unfollow}
@@ -117,6 +127,12 @@ class UserPage extends React.Component {
             {this.renderFollowButton()}
           </Grid>
           <Followees userId={this.props.match.params.userId}/>
+          <Grid item className={classes.container}>
+            <Typography variant="title">
+              Favorites
+            </Typography>
+            <ImageGallery images={this.state.favorites} user={this.props.user} isUserLoggedIn={true}/>
+        </Grid>
       </Paper>
     )
   }
