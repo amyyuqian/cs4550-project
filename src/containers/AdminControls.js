@@ -14,6 +14,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
 import DeleteIcon from '@material-ui/icons/Clear';
 import IconButton from '@material-ui/core/IconButton';
+import CreateUser from "../components/CreateUser";
+import SimpleSnackbar from "../components/SimpleSnackbar";
+import { Link } from "react-router-dom";
 
 class AdminControls extends React.Component {
   constructor(props) {
@@ -21,6 +24,8 @@ class AdminControls extends React.Component {
     this.userService = UserService.instance;
     this.state = {
       users: [],
+      snackbarOpen: false,
+      snackbarText: '',
     }
   }
 
@@ -34,9 +39,22 @@ class AdminControls extends React.Component {
     })
   }
 
-  createNewUser = () => {
-    
-  }
+  createUser = (username, password, email, firstName, lastName) => {
+    var user = {
+      username: username,
+      password: password,
+      email: email,
+      firstName: firstName,
+      lastName: lastName
+    }
+    this.userService.createUser(user).then(() => {
+      this.setState({
+        snackbarOpen: true,
+        snackbarText: 'User created successfully'
+      });
+      this.getAllUsers();
+    })
+  };
 
   deleteUser(userId) {
     this.userService.deleteUser(userId).then(() => {
@@ -47,18 +65,20 @@ class AdminControls extends React.Component {
   renderUsers = () => {
     let users = this.state.users.map((user, index) => {
       return (
-        <ListItem>
-          <ListItemText
-            primary={user.username}
-            secondary={"ID: " + user.id}
-          />
-          <ListItemSecondaryAction>
-            <IconButton aria-label="Delete"
-              onClick={() => this.deleteUser(user.id)}>
-              <DeleteIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
-        </ListItem>
+        <Link to={`/user/edit/${user.id}`} key={index} style={{textDecoration: 'none'}}>
+          <ListItem>
+            <ListItemText
+              primary={user.username}
+              secondary={"ID: " + user.id}
+            />
+            <ListItemSecondaryAction>
+              <IconButton aria-label="Delete"
+                onClick={() => this.deleteUser(user.id)}>
+                <DeleteIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+        </Link>
       )
     })
     return (users);
@@ -67,18 +87,20 @@ class AdminControls extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.container}>
-          <Grid item xs={12} md={6}>
-            <Typography variant="title" className={classes.title}>
-              Users
-            </Typography>
-            <div className={classes.demo}>
-              <List dense={false}>
-                {this.renderUsers()}
-              </List>
-            </div>
-          </Grid>
-      </div>
+      <Paper className={classes.container}>
+        <CreateUser createUser={this.createUser}/>
+        <Grid item xs={12} md={6}>
+          <Typography variant="headline" component="h3">
+            Users
+          </Typography>
+          <div className={classes.demo}>
+            <List dense={false}>
+              {this.renderUsers()}
+            </List>
+          </div>
+        </Grid>
+        <SimpleSnackbar open={this.state.snackbarOpen} text={this.state.snackbarText} />
+      </Paper>
     )
   }
 }

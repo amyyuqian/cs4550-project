@@ -12,6 +12,7 @@ import AdminControls from "./AdminControls";
 import SearchResults from "./SearchResults";
 import UserPage from "./UserPage";
 import ImagePage from "./ImagePage";
+import EditUser from "./EditUser";
 
 class Home extends React.Component {
   constructor(props) {
@@ -62,8 +63,9 @@ class Home extends React.Component {
           <PropsRoute path="/profile" component={Profile} user={this.state.user} setUser={this.setUser}/>
           <PropsRoute path="/admin" component={AdminControls} />
           <PropsRoute path="/searchResults/:input" component={SearchResults}/>
-          <PropsRoute path="/user/:userId" component={UserPage} isUserLoggedIn={this.state.isUserLoggedIn}/>
+          <PropsRoute exact path="/user/:userId" component={UserPage} isUserLoggedIn={this.state.isUserLoggedIn}/>
           <PropsRoute path="/image/:imageId" component={ImagePage} isUserLoggedIn={this.state.isUserLoggedIn} userId={this.state.user.id}/>
+          <PropsRoute exact path="/user/edit/:userId" component={EditUser} />
         </div>
       </Router>
     );

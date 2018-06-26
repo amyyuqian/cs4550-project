@@ -20,23 +20,41 @@ class CreateUser extends React.Component {
     };
   }
 
-  createUser = () => {
-
-  };
-
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value
     });
   };
 
+  renderButton = (classes) => {
+    if (this.state.username && this.state.password && this.state.email) {
+      return (
+        <Button variant="contained" color="primary"
+          className={classes.button} 
+          onClick={() => this.props.createUser(this.state.username, this.state.password,
+            this.state.email, this.state.firstName, this.state.lastName)}>
+          Create User
+        </Button>
+      )
+    } else {
+      return (
+        <Button variant="contained" color="primary" disabled
+          className={classes.button} 
+          onClick={() => this.props.createUser(this.state.username, this.state.password,
+            this.state.email, this.state.firstName, this.state.lastName)}>
+          Create User
+        </Button>
+      )
+    }
+  }
+
   render() {
     const { classes } = this.props;
     return (
-      <Paper className={classes.root} elevation={4}>
+      <div>
         <form className={classes.container} autoComplete="off">
           <Typography variant="headline" component="h3">
-            Register
+            Create User
           </Typography>
           <TextField
             required
@@ -50,8 +68,6 @@ class CreateUser extends React.Component {
             }}
             margin="normal"
           />
-          {this.state.emptyUsername && <Typography className={classes.error}>Please enter a username.</Typography>}
-          {this.state.usernameTaken && <Typography className={classes.error}>Username is already taken.</Typography>}
           <TextField
             required
             id="password"
@@ -65,22 +81,6 @@ class CreateUser extends React.Component {
             type="password"
             margin="normal"
           />
-          {this.state.emptyPass && <Typography className={classes.error}>Please enter a password.</Typography>}
-          {this.state.passwordsNotMatching && <Typography className={classes.error}>Passwords do not match.</Typography>}
-          <TextField
-            required
-            id="verifyPass"
-            label="Verify Password"
-            value={this.state.verifyPass}
-            onChange={this.handleChange("verifyPass")}
-            className={classes.textField}
-            InputLabelProps={{
-              shrink: true
-            }}
-            type="password"
-            margin="normal"
-          />
-          {this.state.emptyVerifyPass && <Typography className={classes.error}>Please enter a password.</Typography>}
           <TextField
             required
             id="email"
@@ -93,17 +93,31 @@ class CreateUser extends React.Component {
             }}
             margin="normal"
           />
-          {this.state.emptyEmail && <Typography className={classes.error}>Please enter an email.</Typography>}
-          <Button
-            onClick={this.createUser}
-            variant="contained"
-            color="primary"
-            className={classes.button}
-          >
-            Create User
-          </Button>
+          <TextField
+            id="firstName"
+            label="First Name"
+            value={this.state.firstName}
+            onChange={this.handleChange("firstName")}
+            className={classes.textField}
+            InputLabelProps={{
+              shrink: true
+            }}
+            margin="normal"
+          />
+          <TextField
+            id="lastName"
+            label="Last Name"
+            value={this.state.lastName}
+            onChange={this.handleChange("lastName")}
+            className={classes.textField}
+            InputLabelProps={{
+              shrink: true
+            }}
+            margin="normal"
+          />
+          {this.renderButton(classes)}
         </form>
-      </Paper>
+      </div>
     );
   }
 }

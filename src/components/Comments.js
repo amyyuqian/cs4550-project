@@ -60,6 +60,7 @@ class Comments extends React.Component {
       text: this.state.comment
     }
     this.commentService.createComment(this.state.id, body).then(() => {
+      this.setState({comment: ''})
       this.getComments();
     })
   }

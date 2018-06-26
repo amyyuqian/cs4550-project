@@ -26,26 +26,26 @@ class Navbar extends React.Component {
             <div className="">
               {!this.props.isUserLoggedIn &&
               <div>
-                <Link to="/" style={styles.link}>
+                <Link to="/" style={{textDecoration: 'none'}}>
                   <Button className={classes.textPrimary}>Home</Button>
                 </Link>
-                <Link to="/login">
+                <Link to="/login" style={{textDecoration: 'none'}}>
                   <Button className={classes.textPrimary}>Login</Button>
                 </Link>
-                <Link to="/register">
+                <Link to="/register" style={{textDecoration: 'none'}}>
                   <Button className={classes.textPrimary}>Register</Button>
                 </Link>
               </div>
               }
               {this.props.isUserLoggedIn &&
               <div>
-                <Link to="/">
+                <Link to="/" style={{textDecoration: 'none'}}>
                   <Button className={classes.textPrimary}>Home</Button>
                 </Link>
-                <Link to="/">
+                <Link to="/" style={{textDecoration: 'none'}}>
                   <Button onClick={this.props.logout} className={classes.textPrimary}>Logout</Button>
                 </Link>
-                <Link to="/profile">
+                <Link to="/profile" style={{textDecoration: 'none'}}>
                   <IconButton
                     className={classes.menuButton, classes.textPrimary}
                     aria-label="Menu"
@@ -81,10 +81,6 @@ const styles = theme => ({
     color: 'white',
     textDecorationLine: 'none'
   },
-  link: {
-    textDecoration: 'none',
-    textDecorationLine: 'none'
-  }
 });
 
 Navbar.propTypes = {

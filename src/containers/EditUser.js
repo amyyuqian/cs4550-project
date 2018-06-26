@@ -10,63 +10,45 @@ import { Link } from "react-router-dom";
 import Followees from "../components/Followees";
 import ImageGallery from "../components/ImageGallery";
 import Grid from '@material-ui/core/Grid';
+import SimpleSnackbar from "../components/SimpleSnackbar";
 
-class Profile extends React.Component {
+class EditUser extends React.Component {
   constructor(props) {
     super(props);
     this.userService = UserService.instance;
     this.state = {
-      id: this.props.user.id,
-      username: this.props.user.username,
-      password: this.props.user.password,
+      id: this.props.match.params.userId,
+      username: "",
+      password: "",
       firstName: "",
       lastName: "",
-      email: this.props.user.email,
+      email: "",
       emptyUsername: false,
       emptyPass: false,
       emptyEmail: false,
-      favorites: []
+      snackbarOpen: false,
+      snackbarText: '',
     };
   }
 
   componentDidMount() {
-    if (this.props.user.firstName) {
-      this.setState({firstName: this.props.user.firstName})
-    }
-    if (this.props.user.lastName) {
-      this.setState({lastName: this.props.user.lastName})
-    }
-    this.getFavorites();
-  }
-  
-  getFavorites = () => {
-    this.userService.getFavorites(this.state.id).then((favs) => {
-      this.setState({favorites: favs})
+    this.userService.getUser(this.state.id).then((user) => {
+      this.setState({
+        username: user.username,
+        password: user.password,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email
+      })
     })
   }
 
-  updateProfile = () => {
-    this.setState({
-      emptyUsername: false,
-      emptyPass: false,
-      emptyEmail: false,
-    })
-
+  updateUser = () => {
     var username = this.state.username;
     var password = this.state.password;
     var firstName = this.state.firstName;
     var lastName = this.state.lastName;
     var email = this.state.email;
-
-    if (!username) {
-      this.setState({emptyUsername: true})
-    }
-    if (!password) {
-      this.setState({emptyPass: true})
-    }
-    if (!email) {
-      this.setState({emptyEmail: true})
-    }
 
     var user = {
       username: username,
@@ -76,16 +58,12 @@ class Profile extends React.Component {
       email: email
     }
 
-    if (!this.isError()) {
-      this.userService.updateUser(user, this.state.id).then((user) => {
-        this.props.setUser(user);
-        this.props.history.push("/");
+    this.userService.updateUser(user, this.state.id).then((user) => {
+      this.setState({
+        snackbarOpen: true,
+        snackbarText: 'User succesfully updated'
       })
-    }
-  }
-
-  isError = () => {
-    return this.state.emptyUsername || this.state.emptyPass || this.state.emptyEmail;
+    })
   }
 
   handleChange = name => event => {
@@ -94,13 +72,33 @@ class Profile extends React.Component {
     });
   };
 
+  renderButton = (classes) => {
+    if (this.state.username && this.state.password && this.state.email) {
+      return (
+        <Button variant="contained" color="primary"
+          className={classes.button} 
+          onClick={() => this.updateUser()}>
+          Save User
+        </Button>
+      )
+    } else {
+      return (
+        <Button variant="contained" color="primary" disabled
+          className={classes.button} 
+          onClick={() => this.updateUser()}>
+          Save User
+        </Button>
+      )
+    }
+  }
+
   render() {
     const { classes } = this.props;
     return (
       <Paper className={classes.root} elevation={4}>
         <form className={classes.container} autoComplete="off">
           <Typography variant="headline" component="h3">
-            Profile
+            Edit User
           </Typography>
           <TextField
             required
@@ -114,7 +112,6 @@ class Profile extends React.Component {
             }}
             margin="normal"
           />
-          {this.state.emptyUsername && <Typography className={classes.error}>Please enter a username.</Typography>}
           <TextField
             required
             id="password"
@@ -128,7 +125,18 @@ class Profile extends React.Component {
             type="password"
             margin="normal"
           />
-          {this.state.emptyPass && <Typography className={classes.error}>Please enter a password.</Typography>}
+          <TextField
+            required
+            id="email"
+            label="Email"
+            value={this.state.email}
+            onChange={this.handleChange("email")}
+            className={classes.textField}
+            InputLabelProps={{
+              shrink: true
+            }}
+            margin="normal"
+          />
           <TextField
             id="firstName"
             label="First Name"
@@ -151,42 +159,9 @@ class Profile extends React.Component {
             }}
             margin="normal"
           />
-          <TextField
-            required
-            id="email"
-            label="Email"
-            value={this.state.email}
-            onChange={this.handleChange("email")}
-            className={classes.textField}
-            InputLabelProps={{
-              shrink: true
-            }}
-            margin="normal"
-          />
-          {this.state.emptyEmail && <Typography className={classes.error}>Please enter an email.</Typography>}
-          <Button
-            onClick={this.updateProfile}
-            variant="contained"
-            color="primary"
-            className={classes.button}
-          >
-            Save Profile
-          </Button>
-          {this.props.user.admin &&
-          <Link to="/admin" style={{textDecoration: 'none'}}>
-            <Button variant="contained" className={classes.button}>
-              Admin Controls
-            </Button>
-          </Link>
-        }
+          {this.renderButton(classes)}
         </form>
-        <Followees userId={this.state.id}/>
-        <Grid item className={classes.container}>
-          <Typography variant="title">
-            Favorites
-          </Typography>
-          <ImageGallery images={this.state.favorites} user={this.props.user} isUserLoggedIn={true}/>
-        </Grid>
+        <SimpleSnackbar open={this.state.snackbarOpen} text={this.state.snackbarText} />
       </Paper>
     );
   }
@@ -207,14 +182,10 @@ const styles = theme => ({
     margin: theme.spacing.unit,
     width: 200
   },
-  error: {
-    fontSize: 12,
-    color: 'red'
-  }
 });
 
-Profile.propTypes = {
+EditUser.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Profile);
+export default withStyles(styles)(EditUser);
