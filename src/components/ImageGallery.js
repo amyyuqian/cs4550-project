@@ -38,7 +38,7 @@ class ImageGallery extends React.Component {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <GridList cellHeight={450} className={classes.gridList}>
+        <GridList cellHeight={450} spacing={1} className={classes.gridList}>
           {this.renderCards()}
         </GridList>
       </div>

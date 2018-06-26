@@ -21,6 +21,12 @@ class SimpleSnackbar extends React.Component {
     }
   }
 
+  componentWillReceiveProps (nextProps) {
+    if(nextProps.open != this.state.open) {
+      this.setState({open: nextProps.open})
+    }
+  }
+
   handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;

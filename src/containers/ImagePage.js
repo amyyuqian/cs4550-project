@@ -21,6 +21,8 @@ class ImagePage extends React.Component {
       image: '',
       id: this.props.match.params.imageId,
       snackbarOpen: false,
+      isFavorite: false,
+      snackbarText: '',
     }
   }
 
@@ -43,23 +45,38 @@ class ImagePage extends React.Component {
   getImage = () => {
     this.imageService.getImage(this.state.id).then((img) => {
       this.setState({image: img});
+      this.isFavorite();
     })
   }
 
   favorite = () => {
     this.imageService.favorite(this.state.id).then(() => {
-      this.setState({snackbarOpen: true})
+      this.setState({
+        snackbarOpen: true,
+        snackbarText: 'Favorited',
+        isFavorite: !this.state.isFavorite
+      })
+    })
+  }
+
+  unfavorite = () => {
+    this.imageService.unfavorite(this.state.id).then(() => {
+      this.setState({
+        snackbarOpen: true,
+        snackbarText: 'Unfavorited',
+        isFavorite: !this.state.isFavorite
+      })
     })
   }
 
   renderFavorite = () => {
-    if (this.props.isUserLoggedIn && this.isFavorite()) {
+    if (this.props.isUserLoggedIn && this.state.isFavorite) {
       return (
-        <Button onClick={this.favorite} size="small" color="primary">
+        <Button onClick={this.unfavorite} size="small" color="primary">
           Unfavorite
         </Button>
       )
-    } else if (this.props.isUserLoggedIn && !this.isFavorite()) {
+    } else if (this.props.isUserLoggedIn && !this.state.isFavorite) {
       return (
         <Button onClick={this.favorite} size="small" color="primary">
           Favorite
@@ -69,10 +86,12 @@ class ImagePage extends React.Component {
   }
 
   isFavorite = () => {
-    this.imageService.isFavorite(this.props.userId, this.state.image.id)
-      .then((isFavorite) => {
-        return isFavorite;
-      })
+    if (this.state.image.id) {
+      this.imageService.isFavorite(this.state.image.id)
+        .then((isFavorite) => {
+          this.setState({isFavorite: isFavorite})
+        })
+    }
   }
 
   render() {
@@ -88,7 +107,7 @@ class ImagePage extends React.Component {
             {this.renderFavorite()}
           </CardActions>
         </Card>
-        <SimpleSnackbar open={this.state.snackbarOpen} text={"Favorited"} />
+        <SimpleSnackbar open={this.state.snackbarOpen} text={this.state.snackbarText} />
       </div>
     )
   }

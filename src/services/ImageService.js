@@ -49,6 +49,14 @@ export default class ImageService {
     })
   }
 
+  unfavorite(id) {
+    return fetch(IMG_API + '/' + id + '/unfavorite', {
+      method: 'post',
+    }).then(function (response) {
+      return response.json();
+    })
+  }
+
   isFavorite(imgId) {
     return fetch(IMG_API  + '/' + imgId + '/isInFavorites', {
       credentials: "same-origin",
