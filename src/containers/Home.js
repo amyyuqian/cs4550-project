@@ -46,6 +46,7 @@ class Home extends React.Component {
   }
 
   logout = () => {
+    this.userService.logout();
     this.setState({isUserLoggedIn: false})
   }
 

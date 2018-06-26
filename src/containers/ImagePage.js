@@ -11,7 +11,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from "@material-ui/core/Typography";
 import SimpleSnackbar from "../components/SimpleSnackbar";
-import CommentService from "../services/CommentService";
+import Comments from "../components/Comments";
 
 class ImagePage extends React.Component {
   constructor(props) {
@@ -107,6 +107,9 @@ class ImagePage extends React.Component {
           <CardActions>
             {this.renderFavorite()}
           </CardActions>
+          <CardContent>
+            <Comments isUserLoggedIn={this.props.isUserLoggedIn} imageId={this.state.image.id} />
+          </CardContent>
         </Card>
         <SimpleSnackbar open={this.state.snackbarOpen} text={this.state.snackbarText} />
       </div>
@@ -124,7 +127,6 @@ const styles = theme => ({
     color: 'white'
   },
   card: {
-    maxWidth: 500,
   },
   media: {
     height: 0,

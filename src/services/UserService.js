@@ -162,4 +162,10 @@ export default class UserService {
       return response.json();
     })
   } 
+
+  logout() {
+    return fetch(BASE_URL + 'logout', {
+      method: 'post'
+    })
+  }
 }
