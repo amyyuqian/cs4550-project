@@ -11,6 +11,7 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Followees from "../components/Followees";
 import ImageGallery from "../components/ImageGallery";
+import SimpleSnackbar from "../components/SimpleSnackbar";
 
 class UserPage extends React.Component {
   constructor(props) {
@@ -20,7 +21,10 @@ class UserPage extends React.Component {
       user: '',
       favorites: [],
       isFollowing: false,
+      snackbarOpen: false,
+      snackbarText: '',
       isUserLoggedIn: this.props.isUserLoggedIn,
+      id: this.props.match.params.userId,
     }
   }
 
@@ -28,21 +32,20 @@ class UserPage extends React.Component {
     var id = this.props.match.params.userId;
     this.getUser(id);
     this.getFavorites(id);
-    this.isFollowing(id);
   }
 
   componentWillReceiveProps (nextProps) {
     if(nextProps.match.params.userId != this.props.match.params.userId) {
       var id = nextProps.match.params.userId ;
       this.getUser(id);
-      this.isFollowing(id);
       this.getFavorites(id);
     }
   }
 
   getUser = (id) => {
     this.userService.getUser(id).then((user) => {
-      this.setState({user: user})
+      this.setState({user: user});
+      this.isFollowing(id);
     })
   }
 
@@ -52,16 +55,23 @@ class UserPage extends React.Component {
     })
   }
 
-  follow = (id) => {
-    this.userService.follow(id).then((user) => {
-      console.log(user);
+  follow = () => {
+    this.userService.follow(this.state.id).then((user) => {
+      this.setState({
+        snackbarOpen: true,
+        snackbarText: 'Followed',
+        isFollowing: !this.state.isFollowing
+      })
     })
   }
 
   unfollow = () => {
-    var id = this.props.match.params.userId;
-    this.userService.unfollow(id).then((user) => {
-      console.log(user);
+    this.userService.unfollow(this.state.id).then((user) => {
+      this.setState({
+        snackbarOpen: true,
+        snackbarText: 'Unfollowed',
+        isFollowing: !this.state.isFollowing
+      })
     })
   }
 
@@ -94,11 +104,11 @@ class UserPage extends React.Component {
 
   isFollowing = () => {
     var id = this.props.match.params.userId;
-    this.userService.isFollowing(id).then((isFollowing) => {
-      if (!isFollowing.error) {
+    if (this.state.user) {
+      this.userService.isFollowing(id).then((isFollowing) => {
         this.setState({isFollowing: isFollowing})
-      }
-    })
+      })
+    }
   }
 
   render() {
@@ -133,6 +143,7 @@ class UserPage extends React.Component {
             </Typography>
             <ImageGallery images={this.state.favorites} user={this.props.user} isUserLoggedIn={true}/>
         </Grid>
+        <SimpleSnackbar open={this.state.snackbarOpen} text={this.state.snackbarText} />
       </Paper>
     )
   }
