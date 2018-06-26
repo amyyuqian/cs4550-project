@@ -11,6 +11,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from "@material-ui/core/Typography";
 import SimpleSnackbar from "../components/SimpleSnackbar";
+import CommentService from "../services/CommentService";
 
 class ImagePage extends React.Component {
   constructor(props) {
